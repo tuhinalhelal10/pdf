@@ -3,69 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PDF Library | My Custom Domain</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>PDF Viewer</title>
     <style>
-        .active-pdf { border-left: 4px solid #3b82f6; background: #eff6ff; }
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            font-family: Arial, sans-serif;
+        }
+        #viewer-container {
+            width: 100%;
+            height: 100vh;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .error-msg {
+            text-align: center;
+            margin-top: 50px;
+            color: red;
+        }
     </style>
 </head>
-<body class="bg-gray-100 h-screen flex flex-col">
+<body>
 
-    <header class="bg-white shadow-sm p-4 text-center">
-        <h1 class="text-xl font-bold text-gray-800">আমার ডিজিটাল লাইব্রেরি</h1>
-    </header>
-
-    <div class="flex flex-1 overflow-hidden">
-        <aside class="w-80 bg-white border-r overflow-y-auto p-4" id="sidebar">
-            <h2 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">নথিপত্র তালিকা</h2>
-            <div id="pdf-list" class="space-y-2">
-                </div>
-        </aside>
-
-        <main class="flex-1 bg-gray-200 relative">
-            <iframe id="viewer" class="w-full h-full hidden" src=""></iframe>
-            <div id="no-file" class="flex flex-col items-center justify-center h-full text-gray-500">
-                <svg class="w-16 h-16 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                <p>দেখার জন্য বাম পাশ থেকে একটি ফাইল সিলেক্ট করুন</p>
-            </div>
-        </main>
-    </div>
+    <div id="viewer-container">
+        </div>
 
     <script>
-        const cloudName = "dhimlg0x0";
-        
-        // এখানে আপনার সব পিডিএফ এর লিস্ট দিন
-        const myFiles = [
-            { id: "t8qv3nmkfjkikcdmfrj3", title: "প্রধান ডকুমেন্ট (নমুনা)" },
-            { id: "অন্য_আইডি_এখানে", title: "দ্বিতীয় ফাইল" },
-            // ভবিষ্যতে নতুন ফাইল এখানে যোগ করবেন
-        ];
-
-        const listContainer = document.getElementById('pdf-list');
-        const viewer = document.getElementById('viewer');
-        const noFile = document.getElementById('no-file');
-
-        function renderList() {
-            myFiles.forEach((file, index) => {
-                const item = document.createElement('div');
-                item.className = "p-3 rounded-lg cursor-pointer hover:bg-gray-50 border transition text-gray-700 text-sm flex justify-between items-center";
-                item.innerHTML = `<span>📄 ${file.title}</span>`;
-                item.onclick = () => {
-                    document.querySelectorAll('.pdf-item').forEach(el => el.classList.remove('active-pdf'));
-                    loadPDF(file.id);
-                };
-                listContainer.appendChild(item);
-            });
+        // ইউআরএল থেকে Public ID সংগ্রহ করার ফাংশন
+        function getPdfId() {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get('id'); // যেমন: ?id=sample_pdf
         }
 
-        function loadPDF(publicId) {
-            const url = `https://res.cloudinary.com/${cloudName}/image/upload/${publicId}.pdf`;
-            viewer.src = url;
-            viewer.classList.remove('hidden');
-            noFile.classList.add('hidden');
-        }
+        const publicId = getPdfId();
+        const container = document.getElementById('viewer-container');
 
-        renderList();
+        if (publicId) {
+            // ক্লাউডিনারি বেস ইউআরএল
+            const baseUrl = "https://res.cloudinary.com/dhimlg0x0/image/upload/";
+            const fullUrl = baseUrl + publicId + ".pdf";
+
+            // আইফ্রেমের মাধ্যমে পিডিএফ দেখানো
+            container.innerHTML = `<iframe src="${fullUrl}"></iframe>`;
+        } else {
+            container.innerHTML = `<div class="error-msg">
+                <h2>দয়া করে একটি সঠিক Public ID প্রদান করুন।</h2>
+                <p>উদাহরণ: yourdomain.com/?id=test_file</p>
+            </div>`;
+        }
     </script>
 </body>
 </html>
