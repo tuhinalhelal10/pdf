@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>PDF Viewer</title>
+<style>
+body{
+    margin:0;
+    font-family:Arial;
+    text-align:center;
+    background:#f4f4f4;
+}
+header{
+    background:#007bff;
+    color:white;
+    padding:15px;
+}
+iframe{
+    width:95%;
+    height:90vh;
+    border:none;
+    margin-top:10px;
+}
+</style>
+</head>
+<body>
+
+<header>
+<h2>PDF Viewer System</h2>
+</header>
+
+<div id="viewer"></div>
+
+<script>
+
+const cloudName = "dhimlg0x0";  // আপনার Cloud Name
+const urlParams = new URLSearchParams(window.location.search);
+const pdfId = urlParams.get('id');
+
+if(pdfId){
+    const pdfUrl = https://res.cloudinary.com/${cloudName}/raw/upload/${pdfId}.pdf;
+    
+    document.getElementById("viewer").innerHTML = 
+    <iframe src="${pdfUrl}"></iframe>;
+}else{
+    document.getElementById("viewer").innerHTML = 
+    "<h3>No PDF Selected</h3>";
+}
+
+</script>
+
+</body>
+</html>
